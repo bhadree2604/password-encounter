@@ -192,7 +192,7 @@ button.login:hover{transform:translateY(-2px);}
   <div class="stage" id="layer1">
     <div class="sub">Clue : Twenty years a house held its breath for one name.</div>
     <input type="password" id="p1" placeholder="•••••••••••" autocomplete="off">
-    <button class="login" onclick="_t1()">Login</button>
+    <button class="login" onclick="attemptRound1()">Login</button>
     <div class="err" id="err1"></div>
     <div class="whisper w-br">so twenty years she wove her wondrous web, and by night unwove it again by torchlight — faithful even in her waiting</div>
   </div>
@@ -201,7 +201,7 @@ button.login:hover{transform:translateY(-2px);}
   <div class="stage hidden" id="layer2">
     <div class="sub">Clue : Touch her where the storm is painted.</div>
     <input type="password" id="p2" placeholder="•••••••••••" autocomplete="off">
-    <button class="login" onclick="_t2()">Login</button>
+    <button class="login" onclick="attemptRound2()">Login</button>
     <div class="err" id="err2"></div>
   </div>
 
@@ -209,7 +209,7 @@ button.login:hover{transform:translateY(-2px);}
   <div class="stage hidden" id="layer3">
     <div class="sub">Clue : No name, no key — only a return in three words.</div>
     <input type="password" id="p3" placeholder="•••••••••••" autocomplete="off">
-    <button class="login" onclick="_t3()">Login</button>
+    <button class="login" onclick="attemptRound3()">Login</button>
     <div class="err" id="err3"></div>
     <div class="whisper w-br">not his name, nor a riddle of the sea — only the three plain words a wanderer says at his own door</div>
   </div>
@@ -224,32 +224,24 @@ button.login:hover{transform:translateY(-2px);}
   </div>
 
 <script>
-let _s1=false,_c1=false,_a1='';
-async function _v(r,g){const q=await fetch('/api/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({round:r,guess:String(g||'')})});if(q.status===429)throw new Error('rate');if(!q.ok)throw new Error('server');const d=await q.json();return d&&d.ok===true;}
-function _e(i,m){const b=document.getElementById(i);b.textContent=m;const s=b.closest('.stage');s.classList.add('shake');setTimeout(()=>s.classList.remove('shake'),400);}
-function _se(i,e){if(e&&e.message==='rate')_e(i,'Too many tries — wait a bit.');else _e(i,'Server not reachable — run `npm start` first.');}
-const _F={x:0.34,y:0.493,w:0.15,h:0.12};let _Fi=null;
-function _Fn(){return new Promise(r=>{if(_Fi&&_Fi.naturalWidth)return r(_Fi);const i=new Image();i.onload=()=>{_Fi=i;r(i);};i.onerror=()=>r(null);i.src='odyssey-bg.png';});}
-async function _L(){const a=document.getElementById('art'),h=document.getElementById('hx');if(!a||!h)return;const m=await _Fn();if(!m||!m.naturalWidth)return;const t=a.getBoundingClientRect();if(t.width<2||t.height<2)return;const s=Math.max(t.width/m.naturalWidth,t.height/m.naturalHeight),dw=m.naturalWidth*s,dh=m.naturalHeight*s,p=getComputedStyle(a).backgroundPosition.split(' ');const f=(v,d)=>{v=String(v).trim();if(v.endsWith('%'))return parseFloat(v)/100;return d;};const fx=f(p[0],0.5),fy=f(p[1],p[0]?0:0.5),ox=(t.width-dw)*fx,oy=(t.height-dh)*fy;h.style.left=(ox+_F.x*dw)+'px';h.style.top=(oy+_F.y*dh)+'px';h.style.width=(_F.w*dw)+'px';h.style.height=(_F.h*dh)+'px';}
-window.addEventListener('load',()=>{_L();if(/showbox/i.test(location.search))document.getElementById('hx').classList.add('showbox');});
-window.addEventListener('resize',_L);
-
-async function _t1(){const v=document.getElementById('p1').value;let o=false;try{o=await _v(1,v);}catch(e){_se('err1',e);return;}if(o){_s1=true;_c1=false;_a1=v;document.getElementById('p2').value='';document.getElementById('err2').textContent='';document.getElementById('layer1').classList.add('hidden');document.getElementById('rt1').classList.add('hidden');_Fp('Phase 2',()=>{document.getElementById('layer2').classList.remove('hidden');document.getElementById('rt2').classList.remove('hidden');document.getElementById('hx').classList.remove('hidden');_L();});}else{_e('err1','That name means nothing here.');}}
-
-function _Fp(t,d){const f=document.getElementById('phaseFlash');document.getElementById('phaseFlashText').textContent=t;f.classList.remove('hidden');setTimeout(()=>{f.classList.add('hidden');d();},2000);}
-
-function _p(){if(!_s1||document.getElementById('layer2').classList.contains('hidden'))return;_c1=true;const p=document.getElementById('p2');p.value=_a1;document.getElementById('err2').textContent='Marked — entering…';setTimeout(()=>{if(document.getElementById('layer2').classList.contains('hidden'))return;document.getElementById('layer2').classList.add('hidden');document.getElementById('rt2').classList.add('hidden');_Fp('Phase 3',()=>{document.getElementById('layer3').classList.remove('hidden');document.getElementById('rt3').classList.remove('hidden');document.getElementById('hx').classList.add('hidden');document.getElementById('p3').focus();});},350);}
-
-async function _t2(){if(!_c1){document.getElementById('err2').textContent='';return;}const v=document.getElementById('p2').value;let o=false;try{o=await _v(2,v);}catch(e){_se('err2',e);return;}if(o){document.getElementById('layer2').classList.add('hidden');document.getElementById('rt2').classList.add('hidden');_Fp('Phase 3',()=>{document.getElementById('layer3').classList.remove('hidden');document.getElementById('rt3').classList.remove('hidden');document.getElementById('hx').classList.add('hidden');});}else{_e('err2','That is not what was given.');}}
-
-async function _t3(){const v=document.getElementById('p3').value;let o=false;try{o=await _v(3,v);}catch(e){_se('err3',e);return;}if(o){document.getElementById('layer3').classList.add('hidden');document.getElementById('rt3').classList.add('hidden');_g();}else{_e('err3','The doors remain shut.');}}
-
-function _g(){const w=document.getElementById('win');w.style.display='flex';const c=['#8a2c2c','#3fa8b5','#d4af6a','#1a2436','#f0d999'];for(let i=0;i<60;i++){const e=document.createElement('div');e.className='confetti';e.style.left=Math.random()*100+'vw';e.style.background=c[Math.floor(Math.random()*c.length)];e.style.animationDuration=(2.5+Math.random()*2.5)+'s';e.style.animationDelay=(Math.random()*2)+'s';w.appendChild(e);}}
-
-document.getElementById('p1').addEventListener('keydown',e=>{if(e.key==='Enter')_t1();});
-document.getElementById('p2').addEventListener('keydown',e=>{if(e.key==='Enter')_t2();});
-document.getElementById('p3').addEventListener('keydown',e=>{if(e.key==='Enter')_t3();});
-document.getElementById('hx').addEventListener('click',_p);
+const API_BASE='/api';let sessionState={phase:1,round1Pass:false,clickMarked:false};
+async function sendAttempt(roundNum,inputVal){try{const resp=await fetch(API_BASE+'/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({round:roundNum,attempt:String(inputVal||'')})});if(resp.status===429){showError('err'+roundNum,'Too many tries — wait a bit.');return null;}if(!resp.ok){showError('err'+roundNum,'Server not reachable — run `npm start` first.');return null;}return await resp.json();}catch(err){showError('err'+roundNum,'Server not reachable — run `npm start` first.');return null;}}
+function showError(elemId,msg){const el=document.getElementById(elemId);el.textContent=msg;const container=el.closest('.stage');container.classList.add('shake');setTimeout(()=>container.classList.remove('shake'),400);}
+const artZone={xPct:0.34,yPct:0.493,wPct:0.15,hPct:0.12};let cachedImg=null;
+function loadArtImg(){return new Promise(resolve=>{if(cachedImg&&cachedImg.naturalWidth)return resolve(cachedImg);const img=new Image();img.onload=()=>{cachedImg=img;resolve(img);};img.onerror=()=>resolve(null);img.src='odyssey-bg.png';});}
+async function positionHotspot(){const artDiv=document.getElementById('art'),hotspot=document.getElementById('hx');if(!artDiv||!hotspot)return;const imgEl=await loadArtImg();if(!imgEl||!imgEl.naturalWidth)return;const rect=artDiv.getBoundingClientRect();if(rect.width<2||rect.height<2)return;const scale=Math.max(rect.width/imgEl.naturalWidth,rect.height/imgEl.naturalHeight),scaledW=imgEl.naturalWidth*scale,scaledH=imgEl.naturalHeight*scale;const pos=getComputedStyle(artDiv).backgroundPosition.split(' ');const parsePos=(val,fallback)=>{val=String(val).trim();if(val.endsWith('%'))return parseFloat(val)/100;return fallback;};const bgX=parsePos(pos[0],0.5),bgY=parsePos(pos[1],pos[0]?0:0.5),offsetX=(rect.width-scaledW)*bgX,offsetY=(rect.height-scaledH)*bgY;hotspot.style.left=(offsetX+artZone.xPct*scaledW)+'px';hotspot.style.top=(offsetY+artZone.yPct*scaledH)+'px';hotspot.style.width=(artZone.wPct*scaledW)+'px';hotspot.style.height=(artZone.hPct*scaledH)+'px';}
+window.addEventListener('load',()=>{positionHotspot();if(/showbox/i.test(location.search))document.getElementById('hx').classList.add('showbox');});
+window.addEventListener('resize',positionHotspot);
+async function attemptRound1(){const input=document.getElementById('p1').value;const result=await sendAttempt(1,input);if(!result)return;if(result.success){sessionState.round1Pass=true;sessionState.clickMarked=false;document.getElementById('p2').value='';document.getElementById('err2').textContent='';document.getElementById('layer1').classList.add('hidden');document.getElementById('rt1').classList.add('hidden');showPhaseTransition('Phase 2',()=>{document.getElementById('layer2').classList.remove('hidden');document.getElementById('rt2').classList.remove('hidden');document.getElementById('hx').classList.remove('hidden');positionHotspot();});}else{showError('err1','That name means nothing here.');}}
+function showPhaseTransition(text,onComplete){const overlay=document.getElementById('phaseFlash');document.getElementById('phaseFlashText').textContent=text;overlay.classList.remove('hidden');setTimeout(()=>{overlay.classList.add('hidden');onComplete();},2000);}
+function handleHotspotClick(){if(!sessionState.round1Pass||document.getElementById('layer2').classList.contains('hidden'))return;sessionState.clickMarked=true;const inputField=document.getElementById('p2');inputField.value='marked';document.getElementById('err2').textContent='Marked — entering…';setTimeout(()=>{if(document.getElementById('layer2').classList.contains('hidden'))return;document.getElementById('layer2').classList.add('hidden');document.getElementById('rt2').classList.add('hidden');showPhaseTransition('Phase 3',()=>{document.getElementById('layer3').classList.remove('hidden');document.getElementById('rt3').classList.remove('hidden');document.getElementById('hx').classList.add('hidden');document.getElementById('p3').focus();});},350);}
+async function attemptRound2(){if(!sessionState.clickMarked){document.getElementById('err2').textContent='';return;}const input=document.getElementById('p2').value;const result=await sendAttempt(2,input);if(!result)return;if(result.success){document.getElementById('layer2').classList.add('hidden');document.getElementById('rt2').classList.add('hidden');showPhaseTransition('Phase 3',()=>{document.getElementById('layer3').classList.remove('hidden');document.getElementById('rt3').classList.remove('hidden');document.getElementById('hx').classList.add('hidden');});}else{showError('err2','That is not what was given.');}}
+async function attemptRound3(){const input=document.getElementById('p3').value;const result=await sendAttempt(3,input);if(!result)return;if(result.success){document.getElementById('layer3').classList.add('hidden');document.getElementById('rt3').classList.add('hidden');displayVictory();}else{showError('err3','The doors remain shut.');}}
+function displayVictory(){const winScreen=document.getElementById('win');winScreen.style.display='flex';const colors=['#8a2c2c','#3fa8b5','#d4af6a','#1a2436','#f0d999'];for(let i=0;i<60;i++){const particle=document.createElement('div');particle.className='confetti';particle.style.left=Math.random()*100+'vw';particle.style.background=colors[Math.floor(Math.random()*colors.length)];particle.style.animationDuration=(2.5+Math.random()*2.5)+'s';particle.style.animationDelay=(Math.random()*2)+'s';winScreen.appendChild(particle);}}
+document.getElementById('p1').addEventListener('keydown',evt=>{if(evt.key==='Enter')attemptRound1();});
+document.getElementById('p2').addEventListener('keydown',evt=>{if(evt.key==='Enter')attemptRound2();});
+document.getElementById('p3').addEventListener('keydown',evt=>{if(evt.key==='Enter')attemptRound3();});
+document.getElementById('hx').addEventListener('click',handleHotspotClick);
 </script>
 </body>
 </html>
