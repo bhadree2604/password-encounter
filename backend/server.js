@@ -58,9 +58,17 @@ app.post('/api/verify', verifyLimiter, (req, res) => {
   setTimeout(() => res.json({ ok }), 120);
 });
 
-// Serve the game (frontend/password-encounter.html, frontend/odyssey-bg.png).
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
-
-app.listen(PORT, () => {
-  console.log('Password Encounter on http://localhost:' + PORT + '/password-encounter.html');
+// Serve the game (frontend/index.html, frontend/odyssey-bg.png).
+const frontendPath = path.join(__dirname, '..', 'frontend');
+app.get('/', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
+app.use(express.static(frontendPath));
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log('Password Encounter on http://localhost:' + PORT);
+  });
+}
+
+module.exports = app;
